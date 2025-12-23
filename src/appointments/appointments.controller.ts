@@ -10,16 +10,16 @@ import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 @ApiBearerAuth()
 @Controller('appointments')
 export class AppointmentsController {
-  constructor(private service: AppointmentsService) {}
+    constructor(private service: AppointmentsService) { }
 
-  @Get()
-  findAll(@Request() req) {
-    return this.service.findAllByDoctor(req.user.sub);
-  }
+    @Get()
+    findAll(@Request() req) {
+        return this.service.findAllByDoctor(req.user.sub);
+    }
 
-  @Roles(UserRole.DOCTOR)
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateAppointmentDto, @Request() req) {
-    return this.service.update(id, req.user.sub, dto);
-  }
+    @Roles(UserRole.DOCTOR)
+    @Patch(':id')
+    update(@Param('id') id: string, @Body() dto: UpdateAppointmentDto, @Request() req) {
+        return this.service.update(id, req.user.sub, dto);
+    }
 }

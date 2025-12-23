@@ -1,20 +1,13 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { AppointmentStatus } from 'src/common/enums/appointment-status.enum';
-import { IsEnum, IsOptional, IsDateString } from 'class-validator';
+import { IsEnum } from 'class-validator';
 
 export class UpdateAppointmentDto {
-  @ApiPropertyOptional({
+  @ApiProperty({
     enum: AppointmentStatus,
     example: AppointmentStatus.CONFIRMED,
+    description: 'New status of the appointment',
   })
-  @IsOptional()
   @IsEnum(AppointmentStatus)
-  status?: AppointmentStatus;
-
-  @ApiPropertyOptional({
-    example: '2025-12-25T10:00:00.000Z',
-  })
-  @IsOptional()
-  @IsDateString()
-  date?: string;
+  status: AppointmentStatus;
 }
