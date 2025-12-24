@@ -12,7 +12,7 @@ import { APP_GUARD } from '@nestjs/core';
   imports: [
     UsersModule,
     JwtModule.register({
-      secret: 'SECRET_KEY',
+      secret: process.env.JWT_SECRET || 'SECRET_KEY',
     }),
   ],
   providers: [
@@ -23,4 +23,4 @@ import { APP_GUARD } from '@nestjs/core';
   ],
   controllers: [AuthController],
 })
-export class AuthModule {}
+export class AuthModule { }
