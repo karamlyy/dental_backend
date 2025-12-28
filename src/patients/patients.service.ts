@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { Patient } from './patient.entity';
 import { User } from 'src/users/user.entity';
 
@@ -11,7 +11,7 @@ export class PatientsService {
         private repo: Repository<Patient>,
         @InjectRepository(User)
         private userRepo: Repository<User>,
-        
+
     ) { }
 
     async create(dto, doctorId: string) {
@@ -20,9 +20,15 @@ export class PatientsService {
         return this.repo.save(patient);
     }
 
-    async findAllByDoctor(doctorId: string) {
+    async findAllByDoctor(doctorId: string, search?: string) {
+        const where: any = { doctor: { id: doctorId } };
+
+        if (search) {
+            where.fullName = ILike(`%${search}%`);
+        }
+
         return this.repo.find({
-            where: { doctor: { id: doctorId } },
+            where,
             order: { createdAt: 'DESC' },
         });
     }

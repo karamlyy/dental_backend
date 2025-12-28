@@ -77,6 +77,7 @@ export class StatsService {
             startTime: nextAppointment.startTime,
             endTime: nextAppointment.endTime,
             patientName: nextAppointment.patient.fullName,
+            phone: nextAppointment.patient.phone,
           }
         : null,
     };

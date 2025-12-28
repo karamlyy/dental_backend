@@ -10,7 +10,7 @@ export class Payment {
   @ManyToOne(() => Patient, (patient) => patient.payments, { onDelete: 'CASCADE' })
   patient: Patient;
 
-  @ManyToOne(() => User) // həkim ↔ payment
+  @ManyToOne(() => User) 
   doctor: User;
 
   @Column('decimal')

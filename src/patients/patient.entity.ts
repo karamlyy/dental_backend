@@ -17,7 +17,6 @@ export class Patient {
     @CreateDateColumn()
     createdAt: Date;
 
-    // Hər pasiyentə aid həkim
     @ManyToOne(() => User, { nullable: false })
     doctor: User;
 

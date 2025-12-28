@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { UserRole } from '../common/enums/user-role.enum';
 
 @Entity('users')
@@ -17,6 +17,16 @@ export class User {
 
   @Column({ type: 'enum', enum: UserRole, default: UserRole.DOCTOR })
   role: UserRole;
+
+  @Column({ nullable: true })
+  doctorId?: string;
+
+  @ManyToOne(() => User, (user) => user.assistants, { nullable: true })
+  @JoinColumn({ name: 'doctorId' })
+  doctor?: User;
+
+  @OneToMany(() => User, (user) => user.doctor)
+  assistants: User[];
 
   @CreateDateColumn()
   createdAt: Date;

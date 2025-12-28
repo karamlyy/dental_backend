@@ -8,5 +8,5 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
   password: 'postgres',
   database: 'dental_db',
   autoLoadEntities: true,
-  synchronize: true, // prod-da false
+  synchronize: true, 
 };

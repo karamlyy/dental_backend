@@ -9,6 +9,6 @@ import { Patient } from 'src/patients/patient.entity';
   imports: [TypeOrmModule.forFeature([Payment, Patient])],
   providers: [PaymentsService],
   controllers: [PaymentsController],
-  exports: [PaymentsService], // ✅ export əlavə et
+  exports: [PaymentsService], 
 })
 export class PaymentsModule {}

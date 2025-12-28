@@ -12,14 +12,15 @@ import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 export class AppointmentsController {
     constructor(private service: AppointmentsService) { }
 
+    @Roles(UserRole.DOCTOR, UserRole.ASSISTANT)
     @Get()
     findAll(@Request() req) {
-        return this.service.findAllByDoctor(req.user.sub);
+        return this.service.findAllByDoctor(req.user.doctorId);
     }
 
-    @Roles(UserRole.DOCTOR)
+    @Roles(UserRole.DOCTOR, UserRole.ASSISTANT)
     @Patch(':id')
     update(@Param('id') id: string, @Body() dto: UpdateAppointmentDto, @Request() req) {
-        return this.service.update(id, req.user.sub, dto);
+        return this.service.update(id, req.user.doctorId, dto);
     }
 }
