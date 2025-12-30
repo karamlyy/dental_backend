@@ -1,4 +1,4 @@
-import { AppointmentStatus } from 'src/common/enums/appointment-status.enum';
+import { AppointmentStatus } from '../common/enums/appointment-status.enum';
 
 export function isValidStatusTransition(
   current: AppointmentStatus,

@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Appointment } from "./appointment.entity";
-import { Patient } from "src/patients/patient.entity";
-import { AppointmentStatus } from "src/common/enums/appointment-status.enum";
+import { Patient } from "../patients/patient.entity";
+import { AppointmentStatus } from "../common/enums/appointment-status.enum";
 import { Repository, MoreThanOrEqual, LessThanOrEqual, Between, Not } from 'typeorm';
 import { CreateAppointmentDto } from "./dto/create-appointment.dto";
 import { UpdateAppointmentDto } from "./dto/update-appointment.dto";
@@ -32,13 +32,28 @@ export class AppointmentsService {
             throw new BadRequestException('Patient not found or not yours');
         }
 
-        /** 🔎 Clash yoxlaması */
+        const inputDate = new Date(dto.date);
+        inputDate.setHours(0, 0, 0, 0);
+
+        const startOfDay = new Date(inputDate);
+        const endOfDay = new Date(inputDate);
+        endOfDay.setHours(23, 59, 59, 999);
+
+        /** 🔎 Clash yoxlaması - Həm Həkim, həm də Pasiyent üçün */
         const clashes = await this.repo.find({
-            where: {
-                doctor: { id: doctorId },
-                date: new Date(dto.date),
-                status: Not(AppointmentStatus.CANCELLED),
-            },
+            where: [
+                {
+                    doctor: { id: doctorId },
+                    date: Between(startOfDay, endOfDay),
+                    status: Not(AppointmentStatus.CANCELLED),
+                },
+                {
+                    patient: { id: patientId },
+                    date: Between(startOfDay, endOfDay),
+                    status: Not(AppointmentStatus.CANCELLED),
+                }
+            ],
+            relations: ['doctor', 'patient'],
         });
 
         for (const existing of clashes) {
