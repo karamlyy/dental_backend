@@ -1,21 +1,23 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // Global Validation Pipe
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
-      transform: true, // 🔥 BU ÇOX VACİBDİR
+      transform: true,
       transformOptions: {
         enableImplicitConversion: true,
       },
     }),
   );
 
+  // Swagger Konfiqurasiyası
   const config = new DocumentBuilder()
     .setTitle('Dental CRM API')
     .setDescription('Backend for Dental App')
@@ -24,8 +26,14 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('swagger', app, document);
+  SwaggerModule.setup('api', app, document); // Swagger /api adresində olacaq
 
-  await app.listen(3000);
+  // CORS aktivləşdir
+  app.enableCors();
+
+  // Railway dinamik port və ya default 3000
+  const port = process.env.PORT || 3000;
+  await app.listen(port);
+  console.log(`Application is running on: ${await app.getUrl()}`);
 }
 bootstrap();
