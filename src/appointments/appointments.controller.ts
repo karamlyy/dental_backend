@@ -1,16 +1,23 @@
-import { Controller, Post, Patch, Get, Body, Param, Request } from '@nestjs/common';
+import { Controller, Post, Patch, Get, Body, Param, Request, Query } from '@nestjs/common';
 import { AppointmentsService } from './appointments.service';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { Roles } from '../auth/roles.decorator';
 import { UserRole } from '../common/enums/user-role.enum';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
+import { GetDoctorScheduleDto } from './dto/get-doctor-schedule.dto';
 
 @ApiTags('Appointments')
 @ApiBearerAuth()
 @Controller('appointments')
 export class AppointmentsController {
     constructor(private service: AppointmentsService) { }
+
+    @Roles(UserRole.DOCTOR, UserRole.ASSISTANT)
+    @Get('schedule')
+    getSchedule(@Query() query: GetDoctorScheduleDto, @Request() req) {
+        return this.service.getDoctorSchedule(req.user.doctorId, query.date);
+    }
 
     @Roles(UserRole.DOCTOR, UserRole.ASSISTANT)
     @Get()

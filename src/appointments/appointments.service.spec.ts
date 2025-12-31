@@ -125,4 +125,32 @@ describe('AppointmentsService', () => {
             .rejects
             .toThrow(BadRequestException);
     });
+    it('should return doctor schedule for a specific date', async () => {
+        const doctorId = 'doctor-1';
+        const dateStr = '2025-01-01';
+
+        const scheduledAppt = {
+            id: 'appt-1',
+            startTime: '10:00',
+            endTime: '11:00',
+            status: AppointmentStatus.SCHEDULED,
+            date: new Date(dateStr),
+        };
+
+        mockAppointmentRepo.find.mockResolvedValue([scheduledAppt]);
+
+        const result = await service.getDoctorSchedule(doctorId, dateStr);
+
+        expect(mockAppointmentRepo.find).toHaveBeenCalledWith(
+            expect.objectContaining({
+                where: expect.objectContaining({
+                    doctor: { id: doctorId },
+                }),
+                select: ['id', 'startTime', 'endTime', 'status', 'date'],
+                order: { startTime: 'ASC' },
+            }),
+        );
+        expect(result).toHaveLength(1);
+        expect(result[0]).toEqual(scheduledAppt);
+    });
 });

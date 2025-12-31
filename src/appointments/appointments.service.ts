@@ -80,6 +80,25 @@ export class AppointmentsService {
 
         return this.repo.save(appointment);
     }
+    async getDoctorSchedule(doctorId: string, dateStr: string) {
+        const inputDate = new Date(dateStr);
+        inputDate.setHours(0, 0, 0, 0);
+
+        const startOfDay = new Date(inputDate);
+        const endOfDay = new Date(inputDate);
+        endOfDay.setHours(23, 59, 59, 999);
+
+        return this.repo.find({
+            where: {
+                doctor: { id: doctorId },
+                date: Between(startOfDay, endOfDay),
+                status: Not(AppointmentStatus.CANCELLED),
+            },
+            select: ['id', 'startTime', 'endTime', 'status', 'date'],
+            order: { startTime: 'ASC' },
+        });
+    }
+
     async findAllByDoctor(doctorId: string) {
         return this.repo.find({
             where: { doctor: { id: doctorId } },
