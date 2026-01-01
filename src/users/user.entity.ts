@@ -1,5 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { UserRole } from '../common/enums/user-role.enum';
+import { Service } from '../services/entities/service.entity';
 
 @Entity('users')
 export class User {
@@ -27,6 +28,9 @@ export class User {
 
   @OneToMany(() => User, (user) => user.doctor)
   assistants: User[];
+
+  @OneToMany(() => Service, (service) => service.doctor)
+  services: Service[];
 
   @CreateDateColumn()
   createdAt: Date;
