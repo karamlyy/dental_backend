@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ILike, Repository } from 'typeorm';
 import { Patient } from './patient.entity';
 import { User } from 'src/users/user.entity';
+import { PatientService } from './entities/patient-service.entity';
+import { CreatePatientServiceDto } from './dto/create-patient-service.dto';
 
 @Injectable()
 export class PatientsService {
@@ -11,6 +13,8 @@ export class PatientsService {
         private repo: Repository<Patient>,
         @InjectRepository(User)
         private userRepo: Repository<User>,
+        @InjectRepository(PatientService)
+        private patientServiceRepo: Repository<PatientService>,
 
     ) { }
 
@@ -60,5 +64,36 @@ export class PatientsService {
         if (!patient) throw new Error('Patient not found or not yours');
 
         return patient;
+    }
+
+    async addService(patientId: string, doctorId: string, dto: CreatePatientServiceDto) {
+        const patient = await this.repo.findOne({
+            where: { id: patientId, doctor: { id: doctorId } },
+        });
+
+        if (!patient) throw new Error('Patient not found or not yours');
+
+        const service = this.patientServiceRepo.create({
+            ...dto,
+            patient,
+            doctorId,
+        });
+
+        await this.patientServiceRepo.save(service);
+
+        // Update patient totalAmount
+        const price = Number(dto.price);
+        patient.totalAmount = Number(patient.totalAmount) + price;
+        return this.repo.save(patient);
+    }
+
+    async findServices(patientId: string, doctorId: string) {
+        return this.patientServiceRepo.find({
+            where: {
+                patient: { id: patientId },
+                doctor: { id: doctorId }
+            },
+            order: { createdAt: 'DESC' }
+        });
     }
 }

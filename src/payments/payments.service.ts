@@ -27,7 +27,13 @@ export class PaymentsService {
             doctor: { id: doctorId },
         });
 
-        return this.repo.save(payment);
+        const savedPayment = await this.repo.save(payment);
+
+        // Update patient paidAmount
+        patient.paidAmount = Number(patient.paidAmount) + Number(dto.amount);
+        await this.patientRepo.save(patient);
+
+        return savedPayment;
     }
 
     async findByPatient(patientId: string, doctorId: string) {

@@ -8,6 +8,7 @@ import { AppointmentsService } from 'src/appointments/appointments.service';
 import { PaymentsService } from 'src/payments/payments.service';
 import { CreateAppointmentDto } from 'src/appointments/dto/create-appointment.dto';
 import { CreatePaymentDto } from 'src/payments/dto/create-payment.dto';
+import { CreatePatientServiceDto } from './dto/create-patient-service.dto';
 
 @ApiTags('Patients')
 @ApiBearerAuth()
@@ -69,5 +70,19 @@ export class PatientsController {
     @Post(':id/payments')
     createPayment(@Param('id') patientId: string, @Body() dto: CreatePaymentDto, @Request() req) {
         return this.paymentsService.createForPatient(dto, patientId, req.user.doctorId);
+    }
+
+    // 🔹 Pasiyentə xidmət (borc) əlavə et
+    @Roles(UserRole.DOCTOR, UserRole.ASSISTANT)
+    @Post(':id/services')
+    addService(@Param('id') patientId: string, @Body() dto: CreatePatientServiceDto, @Request() req) {
+        return this.service.addService(patientId, req.user.doctorId, dto);
+    }
+
+    // 🔹 Pasiyentin servisləri
+    @Roles(UserRole.DOCTOR, UserRole.ASSISTANT)
+    @Get(':id/services')
+    getServices(@Param('id') patientId: string, @Request() req) {
+        return this.service.findServices(patientId, req.user.doctorId);
     }
 }

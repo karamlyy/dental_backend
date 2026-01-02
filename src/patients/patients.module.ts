@@ -7,9 +7,11 @@ import { AppointmentsModule } from '../appointments/appointments.module';
 import { PaymentsModule } from '../payments/payments.module';
 import { User } from 'src/users/user.entity';
 
+import { PatientService } from './entities/patient-service.entity';
+
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Patient, User]),
+    TypeOrmModule.forFeature([Patient, User, PatientService]),
     AppointmentsModule, // ✅ AppointmentsService üçün
     PaymentsModule,     // ✅ PaymentsService üçün
   ],
